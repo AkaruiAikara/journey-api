@@ -5,7 +5,7 @@ const router = express.Router();
 const { auth } = require("../middlewares/auth");
 const { uploadFile } = require("../middlewares/uploadFile");
 
-const { login, register } = require("../controllers/auth");
+const { login, register, checkAuth } = require("../controllers/auth");
 const { getUserById, updateUser, deleteUser } = require("../controllers/user");
 const {
   getAllJourneys,
@@ -22,6 +22,7 @@ const {
 
 router.post("/login", login);
 router.post("/register", register);
+router.get("/check-auth", auth, checkAuth);
 
 router.get("/users/:id", getUserById);
 router.patch("/users/:id", uploadFile("image"), updateUser);

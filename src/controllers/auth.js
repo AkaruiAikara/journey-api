@@ -132,3 +132,25 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+exports.checkAuth = async (req, res) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        message: "Unauthorized",
+      });
+      return;
+    }
+    res.json({
+      data: {
+        id: req.user.id,
+        fullName: req.user.fullName,
+        email: req.user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
