@@ -57,6 +57,11 @@ exports.getJourneyById = (req, res) => {
 };
 
 exports.addJourney = (req, res) => {
+  try {
+    req.body.image = req.file.filename;
+  } catch (e) {
+    return;
+  }
   Journey.create(req.body)
     .then((journey) => {
       res.status(200).json(journey);
@@ -67,6 +72,11 @@ exports.addJourney = (req, res) => {
 };
 
 exports.updateJourney = (req, res) => {
+  try {
+    req.body.image = req.file.filename;
+  } catch (e) {
+    return;
+  }
   Journey.update(req.body, {
     where: {
       id: req.params.id,

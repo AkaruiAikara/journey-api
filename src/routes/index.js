@@ -2,6 +2,10 @@ const express = require("express");
 
 const router = express.Router();
 
+const { auth } = require("../middlewares/auth");
+const { uploadFile } = require("../middlewares/uploadFile");
+
+const { login, register } = require("../controllers/auth");
 const { getUserById, updateUser, deleteUser } = require("../controllers/user");
 const {
   getAllJourneys,
@@ -16,14 +20,17 @@ const {
   deleteBookmark,
 } = require("../controllers/bookmark");
 
+router.post("/login", login);
+router.post("/register", register);
+
 router.get("/users/:id", getUserById);
-router.patch("/users/:id", updateUser);
+router.patch("/users/:id", uploadFile("image"), updateUser);
 router.delete("/users/:id", deleteUser);
 
 router.get("/journeys", getAllJourneys);
 router.get("/journeys/:id", getJourneyById);
-router.post("/journeys", addJourney);
-router.patch("/journeys/:id", updateJourney);
+router.post("/journeys", uploadFile("image"), addJourney);
+router.patch("/journeys/:id", uploadFile("image"), updateJourney);
 router.delete("/journeys/:id", deleteJourney);
 
 router.get("/bookmarks/:userId", getBookmarksByUserId);

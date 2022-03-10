@@ -29,6 +29,15 @@ exports.getUserById = (req, res) => {
 };
 
 exports.updateUser = (req, res) => {
+  if (req.body.password) {
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+    req.body.password = hashedPassword;
+  }
+  try {
+    req.body.image = req.file.filename;
+  } catch (e) {
+    return;
+  }
   User.update(req.body, {
     where: {
       id: req.params.id,
