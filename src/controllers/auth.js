@@ -54,6 +54,7 @@ exports.register = async (req, res) => {
       {
         id: newUser.id,
         email: newUser.email,
+        image: newUser.image,
       },
       process.env.JWT_SECRET,
       {
@@ -113,6 +114,7 @@ exports.login = async (req, res) => {
       {
         id: user.id,
         email: user.email,
+        image: user.image,
       },
       process.env.JWT_SECRET,
       {
