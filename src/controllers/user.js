@@ -36,8 +36,9 @@ exports.updateUser = (req, res) => {
   try {
     req.body.image = req.file.filename;
   } catch (e) {
-    return;
+    console.log("Assume user not update image");
   }
+  console.log(req.body);
   User.update(req.body, {
     where: {
       id: req.params.id,

@@ -123,6 +123,7 @@ exports.login = async (req, res) => {
       data: {
         fullName: user.fullName,
         email: user.email,
+        image: user.image,
         token,
       },
     });
@@ -146,6 +147,7 @@ exports.checkAuth = async (req, res) => {
         id: req.user.id,
         fullName: req.user.fullName,
         email: req.user.email,
+        image: req.user.image,
       },
     });
   } catch (error) {

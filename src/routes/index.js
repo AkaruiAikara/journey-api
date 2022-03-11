@@ -20,9 +20,11 @@ const {
   deleteBookmark,
 } = require("../controllers/bookmark");
 
+router.use(auth)
+
 router.post("/login", login);
 router.post("/register", register);
-router.get("/check-auth", auth, checkAuth);
+router.get("/check-auth", checkAuth);
 
 router.get("/users/:id", getUserById);
 router.patch("/users/:id", uploadFile("image"), updateUser);
