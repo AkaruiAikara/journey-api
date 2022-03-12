@@ -9,10 +9,12 @@ const { login, register, checkAuth } = require("../controllers/auth");
 const { getUserById, updateUser, deleteUser } = require("../controllers/user");
 const {
   getAllJourneys,
-  getJourneyById,
+  getJourneysByUserId,
+  getJourneyBySlug,
   addJourney,
   updateJourney,
   deleteJourney,
+  searchJourneys,
 } = require("../controllers/journey");
 const {
   getBookmarksByUserId,
@@ -20,24 +22,24 @@ const {
   deleteBookmark,
 } = require("../controllers/bookmark");
 
-router.use(auth)
-
 router.post("/login", login);
 router.post("/register", register);
-router.get("/check-auth", checkAuth);
+router.get("/check-auth", auth, checkAuth);
 
 router.get("/users/:id", getUserById);
-router.patch("/users/:id", uploadFile("image"), updateUser);
-router.delete("/users/:id", deleteUser);
+router.patch("/users/:id", auth, uploadFile("image"), updateUser);
+router.delete("/users/:id", auth, deleteUser);
 
 router.get("/journeys", getAllJourneys);
-router.get("/journeys/:id", getJourneyById);
-router.post("/journeys", uploadFile("image"), addJourney);
-router.patch("/journeys/:id", uploadFile("image"), updateJourney);
-router.delete("/journeys/:id", deleteJourney);
+router.get("/journeys/user/:id", getJourneysByUserId);
+router.get("/journeys/:slug", getJourneyBySlug);
+router.post("/journeys", auth, uploadFile("image"), addJourney);
+router.patch("/journeys/:id", auth, uploadFile("image"), updateJourney);
+router.delete("/journeys/:id", auth, deleteJourney);
+router.get("/journeys/search/:search", searchJourneys);
 
-router.get("/bookmarks/:userId", getBookmarksByUserId);
-router.post("/bookmarks", addBookmark);
-router.delete("/bookmarks/:userId/:journeyId", deleteBookmark);
+router.get("/bookmarks/:userId", auth, getBookmarksByUserId);
+router.post("/bookmarks", auth, addBookmark);
+router.delete("/bookmarks/:userId/:journeyId", auth, deleteBookmark);
 
 module.exports = router;

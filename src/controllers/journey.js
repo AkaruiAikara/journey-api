@@ -1,4 +1,5 @@
 const { Bookmark, Journey, User } = require("../../models");
+const { Op } = require("sequelize");
 
 exports.getAllJourneys = (req, res) => {
   Journey.findAll({
@@ -27,8 +28,41 @@ exports.getAllJourneys = (req, res) => {
     });
 };
 
-exports.getJourneyById = (req, res) => {
-  Journey.findByPk(req.params.id, {
+exports.getJourneysByUserId = (req, res) => {
+  Journey.findAll({
+    where: {
+      userId: req.params.id,
+    },
+    include: [
+      {
+        model: User,
+        as: "user",
+      },
+      {
+        model: Bookmark,
+        as: "bookmarks",
+        include: [
+          {
+            model: User,
+            as: "user",
+          },
+        ],
+      },
+    ],
+  })
+    .then((journey) => {
+      res.status(200).json(journey);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
+exports.getJourneyBySlug = (req, res) => {
+  Journey.findOne({
+    where: {
+      slug: req.params.slug,
+    },
     include: [
       {
         model: User,
@@ -75,7 +109,7 @@ exports.updateJourney = (req, res) => {
   try {
     req.body.image = req.file.filename;
   } catch (e) {
-    return;
+    console.log("Assume user not update image");
   }
   Journey.update(req.body, {
     where: {
@@ -100,6 +134,48 @@ exports.deleteJourney = (req, res) => {
       res.status(200).json(journey);
     })
     .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
+exports.searchJourneys = (req, res) => {
+  Journey.findAll({
+    where: {
+      [Op.or]: [
+        {
+          title: {
+            [Op.like]: `%${req.params.search}%`,
+          },
+        },
+        {
+          description: {
+            [Op.like]: `%${req.params.search}%`,
+          },
+        },
+      ],
+    },
+    include: [
+      {
+        model: User,
+        as: "user",
+      },
+      {
+        model: Bookmark,
+        as: "bookmarks",
+        include: [
+          {
+            model: User,
+            as: "user",
+          },
+        ],
+      },
+    ],
+  })
+    .then((journey) => {
+      res.status(200).json(journey);
+    })
+    .catch((err) => {
+      console.log(err);
       res.status(500).json(err);
     });
 };

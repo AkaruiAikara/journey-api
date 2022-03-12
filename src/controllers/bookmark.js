@@ -1,23 +1,41 @@
-const { Bookmark, Journey } = require("../../models");
+const { Bookmark, Journey, User } = require("../../models");
 
 exports.getBookmarksByUserId = (req, res) => {
   Bookmark.findAll({
     where: {
-      userId: req.params.id,
+      userId: req.params.userId,
     },
     include: [
       {
         model: Journey,
         as: "journey",
+        include: [
+          {
+            model: User,
+            as: "user",
+          },
+          {
+            model: Bookmark,
+            as: "bookmarks",
+            include: [
+              {
+                model: User,
+                as: "user",
+              },
+            ],
+          },
+        ],
       },
     ],
   })
     .then((bookmarks) => {
       if (!bookmarks)
         return res.status(404).json({ message: "Bookmarks not found" });
-      res.status(200).json(bookmarks);
+      const journeys = bookmarks.map((bookmark) => bookmark.journey);
+      res.status(200).json(journeys);
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json(err);
     });
 };

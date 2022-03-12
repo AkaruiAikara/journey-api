@@ -1,4 +1,6 @@
 const { Bookmark, Journey, User } = require("../../models");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.getUserById = (req, res) => {
   User.findByPk(req.params.id, {
@@ -30,22 +32,44 @@ exports.getUserById = (req, res) => {
 
 exports.updateUser = (req, res) => {
   if (req.body.password) {
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-    req.body.password = hashedPassword;
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
   }
   try {
     req.body.image = req.file.filename;
   } catch (e) {
     console.log("Assume user not update image");
   }
-  console.log(req.body);
   User.update(req.body, {
     where: {
       id: req.params.id,
     },
   })
-    .then((user) => {
-      res.status(200).json(user);
+    .then(() => {
+      // get updated user
+      User.findByPk(req.params.id).then((user) => {
+        // regenerate token
+        const token = jwt.sign(
+          {
+            id: user.id,
+            fullName: user.fullName,
+            email: user.email,
+            image: user.image,
+          },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "24h",
+          }
+        );
+        res.status(200).json({
+          data: {
+            id: user.id,
+            fullName: user.fullName,
+            email: user.email,
+            image: user.image,
+            token,
+          },
+        });
+      });
     })
     .catch((err) => {
       res.status(500).json(err);
