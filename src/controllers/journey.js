@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 
 exports.getAllJourneys = (req, res) => {
   Journey.findAll({
+    order: [["createdAt", "DESC"]],
     include: [
       {
         model: User,
@@ -33,6 +34,7 @@ exports.getJourneysByUserId = (req, res) => {
     where: {
       userId: req.params.id,
     },
+    order: [["createdAt", "DESC"]],
     include: [
       {
         model: User,
@@ -101,7 +103,9 @@ exports.addJourney = (req, res) => {
       res.status(200).json(journey);
     })
     .catch((err) => {
-      res.status(500).json(err);
+      res.status(500).json({
+        message: err.message,
+      });
     });
 };
 

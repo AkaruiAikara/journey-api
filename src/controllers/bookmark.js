@@ -5,6 +5,7 @@ exports.getBookmarksByUserId = (req, res) => {
     where: {
       userId: req.params.userId,
     },
+    order: [["createdAt", "DESC"]],
     include: [
       {
         model: Journey,
